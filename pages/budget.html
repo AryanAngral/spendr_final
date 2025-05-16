@@ -1,0 +1,201 @@
+<div class="budget-container">
+    <div class="budget-header">
+        <h2>Budget Management</h2>
+        <button class="form-button" onclick="openAddBudgetModal()">Add Budget</button>
+    </div>
+
+    <div class="budget-overview">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Monthly Budget</h3>
+                <div class="card-icon">💰</div>
+            </div>
+            <p class="card-value">₹50,000</p>
+            <div class="budget-progress">
+                <div class="progress-bar progress-safe" style="width: 65%;"></div>
+            </div>
+            <p class="card-info">65% of budget used</p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Savings Goal</h3>
+                <div class="card-icon">🎯</div>
+            </div>
+            <p class="card-value">₹15,000</p>
+            <div class="budget-progress">
+                <div class="progress-bar progress-warning" style="width: 80%;"></div>
+            </div>
+            <p class="card-info">80% of goal achieved</p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Emergency Fund</h3>
+                <div class="card-icon">🚨</div>
+            </div>
+            <p class="card-value">₹100,000</p>
+            <div class="budget-progress">
+                <div class="progress-bar progress-safe" style="width: 100%;"></div>
+            </div>
+            <p class="card-info">Target achieved!</p>
+        </div>
+    </div>
+
+    <div class="category-budgets">
+        <div class="section-header">
+            <h3>Category Budgets</h3>
+            <div class="chart-filters">
+                <button class="chart-filter active">Monthly</button>
+                <button class="chart-filter">Quarterly</button>
+                <button class="chart-filter">Yearly</button>
+            </div>
+        </div>
+
+        <div class="categories-grid">
+            <div class="category-card">
+                <div class="category-header">
+                    <span class="category-name">Housing</span>
+                    <span class="category-budget">₹15,000</span>
+                </div>
+                <div class="budget-progress">
+                    <div class="progress-bar progress-safe" style="width: 60%;"></div>
+                </div>
+                <div class="category-details">
+                    <span>Spent: ₹9,000</span>
+                    <span>Remaining: ₹6,000</span>
+                </div>
+            </div>
+
+            <div class="category-card">
+                <div class="category-header">
+                    <span class="category-name">Food & Groceries</span>
+                    <span class="category-budget">₹7,500</span>
+                </div>
+                <div class="budget-progress">
+                    <div class="progress-bar progress-warning" style="width: 85%;"></div>
+                </div>
+                <div class="category-details">
+                    <span>Spent: ₹6,375</span>
+                    <span>Remaining: ₹1,125</span>
+                </div>
+            </div>
+
+            <div class="category-card">
+                <div class="category-header">
+                    <span class="category-name">Transportation</span>
+                    <span class="category-budget">₹7,500</span>
+                </div>
+                <div class="budget-progress">
+                    <div class="progress-bar progress-danger" style="width: 95%;"></div>
+                </div>
+                <div class="category-details">
+                    <span>Spent: ₹7,125</span>
+                    <span>Remaining: ₹375</span>
+                </div>
+            </div>
+
+            <div class="category-card">
+                <div class="category-header">
+                    <span class="category-name">Entertainment</span>
+                    <span class="category-budget">₹5,000</span>
+                </div>
+                <div class="budget-progress">
+                    <div class="progress-bar progress-safe" style="width: 40%;"></div>
+                </div>
+                <div class="category-details">
+                    <span>Spent: ₹2,000</span>
+                    <span>Remaining: ₹3,000</span>
+                </div>
+            </div>
+
+            <div class="category-card">
+                <div class="category-header">
+                    <span class="category-name">Shopping</span>
+                    <span class="category-budget">₹5,000</span>
+                </div>
+                <div class="budget-progress">
+                    <div class="progress-bar progress-safe" style="width: 50%;"></div>
+                </div>
+                <div class="category-details">
+                    <span>Spent: ₹2,500</span>
+                    <span>Remaining: ₹2,500</span>
+                </div>
+            </div>
+
+            <div class="category-card">
+                <div class="category-header">
+                    <span class="category-name">Utilities</span>
+                    <span class="category-budget">₹5,000</span>
+                </div>
+                <div class="budget-progress">
+                    <div class="progress-bar progress-warning" style="width: 75%;"></div>
+                </div>
+                <div class="category-details">
+                    <span>Spent: ₹3,750</span>
+                    <span>Remaining: ₹1,250</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="budget-charts">
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">Monthly Spending Trend</h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="spendingTrendChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">Category Distribution</h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="categoryDistributionChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Budget Modal -->
+<div id="addBudgetModal" class="modal-overlay" style="display: none;">
+    <div class="modal">
+        <h2>Add New Budget</h2>
+        <form id="budgetForm">
+            <div class="form-group">
+                <label for="budgetCategory" class="form-label">Category</label>
+                <select id="budgetCategory" class="form-input" required>
+                    <option value="">Select Category</option>
+                    <option value="housing">Housing</option>
+                    <option value="food">Food & Groceries</option>
+                    <option value="transportation">Transportation</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="shopping">Shopping</option>
+                    <option value="utilities">Utilities</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="budgetAmount" class="form-label">Budget Amount</label>
+                <input type="number" id="budgetAmount" class="form-input" required min="0" step="100">
+            </div>
+
+            <div class="form-group">
+                <label for="budgetPeriod" class="form-label">Budget Period</label>
+                <select id="budgetPeriod" class="form-input" required>
+                    <option value="monthly">Monthly</option>
+                    <option value="quarterly">Quarterly</option>
+                    <option value="yearly">Yearly</option>
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="form-button" onclick="closeAddBudgetModal()">Cancel</button>
+                <button type="submit" class="form-button">Save Budget</button>
+            </div>
+        </form>
+    </div>
+</div> 
