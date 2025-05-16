@@ -1,0 +1,231 @@
+<div class="tax-container">
+    <div class="tax-summary">
+        <div class="tax-header">
+            <div>
+                <h2>Tax Summary</h2>
+                <p>Financial Year 2023-24</p>
+            </div>
+            <button class="form-button" onclick="openAddTaxModal()">Add Tax Document</button>
+        </div>
+
+        <div class="tax-cards">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Total Income</h3>
+                    <div class="card-icon">💼</div>
+                </div>
+                <p class="card-value">₹12,00,000</p>
+                <p class="card-info">Salary + Investments</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Tax Liability</h3>
+                    <div class="card-icon">💰</div>
+                </div>
+                <p class="card-value">₹1,25,000</p>
+                <p class="card-info">After deductions</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Tax Savings</h3>
+                    <div class="card-icon">🎯</div>
+                </div>
+                <p class="card-value">₹50,000</p>
+                <p class="card-info">Through deductions</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="tax-deductions">
+        <div class="section-header">
+            <h3>Tax Deductions</h3>
+            <div class="chart-filters">
+                <button class="chart-filter active">All</button>
+                <button class="chart-filter">80C</button>
+                <button class="chart-filter">80D</button>
+                <button class="chart-filter">Others</button>
+            </div>
+        </div>
+
+        <div class="deductions-grid">
+            <div class="deduction-card">
+                <div class="deduction-header">
+                    <h4>Section 80C</h4>
+                    <span class="deduction-amount">₹1,50,000</span>
+                </div>
+                <div class="deduction-progress">
+                    <div class="progress-bar progress-safe" style="width: 100%;"></div>
+                </div>
+                <div class="deduction-items">
+                    <div class="deduction-item">
+                        <span>PPF Investment</span>
+                        <span>₹70,000</span>
+                    </div>
+                    <div class="deduction-item">
+                        <span>ELSS Funds</span>
+                        <span>₹50,000</span>
+                    </div>
+                    <div class="deduction-item">
+                        <span>Life Insurance</span>
+                        <span>₹30,000</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="deduction-card">
+                <div class="deduction-header">
+                    <h4>Section 80D</h4>
+                    <span class="deduction-amount">₹25,000</span>
+                </div>
+                <div class="deduction-progress">
+                    <div class="progress-bar progress-warning" style="width: 50%;"></div>
+                </div>
+                <div class="deduction-items">
+                    <div class="deduction-item">
+                        <span>Health Insurance</span>
+                        <span>₹25,000</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="deduction-card">
+                <div class="deduction-header">
+                    <h4>House Rent Allowance</h4>
+                    <span class="deduction-amount">₹1,20,000</span>
+                </div>
+                <div class="deduction-progress">
+                    <div class="progress-bar progress-safe" style="width: 80%;"></div>
+                </div>
+                <div class="deduction-items">
+                    <div class="deduction-item">
+                        <span>Annual Rent Paid</span>
+                        <span>₹2,40,000</span>
+                    </div>
+                    <div class="deduction-item">
+                        <span>HRA Received</span>
+                        <span>₹1,20,000</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tax-charts">
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">Income Breakdown</h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="incomeBreakdownChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">Tax Savings Distribution</h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="taxSavingsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="tax-documents">
+        <div class="section-header">
+            <h3>Tax Documents</h3>
+            <input type="text" placeholder="Search documents..." class="form-input search-input">
+        </div>
+
+        <div class="documents-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Document</th>
+                        <th>Type</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Form 16</td>
+                        <td>Salary</td>
+                        <td>31 Mar 2024</td>
+                        <td>₹12,00,000</td>
+                        <td><span class="status-verified">Verified</span></td>
+                        <td>
+                            <button class="action-btn tax-document-action" data-action="view" data-document="form16">View</button>
+                            <button class="action-btn tax-document-action" data-action="download" data-document="form16">Download</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>80C Proof</td>
+                        <td>Investment</td>
+                        <td>15 Mar 2024</td>
+                        <td>₹1,50,000</td>
+                        <td><span class="status-pending">Pending</span></td>
+                        <td>
+                            <button class="action-btn tax-document-action" data-action="view" data-document="80c">View</button>
+                            <button class="action-btn tax-document-action" data-action="download" data-document="80c">Download</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Rent Receipts</td>
+                        <td>HRA</td>
+                        <td>31 Mar 2024</td>
+                        <td>₹2,40,000</td>
+                        <td><span class="status-verified">Verified</span></td>
+                        <td>
+                            <button class="action-btn tax-document-action" data-action="view" data-document="rent">View</button>
+                            <button class="action-btn tax-document-action" data-action="download" data-document="rent">Download</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add Tax Document Modal -->
+<div id="addTaxModal" class="modal-overlay" style="display: none;">
+    <div class="modal">
+        <h2>Add Tax Document</h2>
+        <form id="taxDocumentForm">
+            <div class="form-group">
+                <label for="documentType" class="form-label">Document Type</label>
+                <select id="documentType" class="form-input" required>
+                    <option value="">Select Type</option>
+                    <option value="form16">Form 16</option>
+                    <option value="80c">80C Proof</option>
+                    <option value="80d">80D Proof</option>
+                    <option value="rent">Rent Receipts</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="documentDate" class="form-label">Document Date</label>
+                <input type="date" id="documentDate" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+                <label for="documentAmount" class="form-label">Amount</label>
+                <input type="number" id="documentAmount" class="form-input" required min="0" step="100">
+            </div>
+
+            <div class="form-group">
+                <label for="documentFile" class="form-label">Upload Document</label>
+                <input type="file" id="documentFile" class="form-input" required accept=".pdf,.jpg,.jpeg,.png">
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="form-button" onclick="closeAddTaxModal()">Cancel</button>
+                <button type="submit" class="form-button">Upload Document</button>
+            </div>
+        </form>
+    </div>
+</div> 
