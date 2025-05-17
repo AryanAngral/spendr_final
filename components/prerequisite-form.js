@@ -64,38 +64,10 @@ function initializeApp(userData) {
         welcomeText.textContent = `Welcome back, ${userData.fullName}!`;
     });
     
-    // Calculate monthly budget based on income and savings goal
-    const monthlyBudget = userData.monthlyIncome * (1 - userData.savingsGoal / 100);
-    
-    // Update budget values if on budget page
-    const budgetValue = document.querySelector('.budget-overview .card-value');
-    if (budgetValue) {
-        budgetValue.textContent = `₹${monthlyBudget.toFixed(2)}`;
+    // Recalculate budgets if budget.js is loaded
+    if (typeof calculateBudgets === 'function') {
+        calculateBudgets(userData);
     }
-    
-    // Set up initial category budgets based on typical percentages
-    const categoryBudgets = {
-        'Housing': 0.3,
-        'Food & Groceries': 0.15,
-        'Transportation': 0.15,
-        'Entertainment': 0.1,
-        'Shopping': 0.1,
-        'Utilities': 0.1
-    };
-    
-    // Update category budgets
-    Object.entries(categoryBudgets).forEach(([category, percentage]) => {
-        const categoryBudget = monthlyBudget * percentage;
-        const categoryElement = Array.from(document.querySelectorAll('.category-name'))
-            .find(el => el.textContent === category);
-        
-        if (categoryElement) {
-            const budgetElement = categoryElement.parentElement.querySelector('.category-budget');
-            if (budgetElement) {
-                budgetElement.textContent = `₹${categoryBudget.toFixed(2)}`;
-            }
-        }
-    });
     
     // Initialize investment recommendations based on risk tolerance
     initializeInvestmentRecommendations(userData.riskTolerance);
