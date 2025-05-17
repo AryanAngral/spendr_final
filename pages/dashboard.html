@@ -13,8 +13,16 @@
     <div class="main-content">
         <div class="dashboard-header">
             <div class="welcome-text">
-                <h1>Welcome back, Rahul!</h1>
-                <p>Here's your financial overview for March 2024</p>
+                <h1>Welcome back!</h1>
+                <p>Here's your financial overview</p>
+            </div>
+            <div class="financial-health">
+                <div class="score-container">
+                    <h3>Financial Health Score</h3>
+                    <div class="score-circle">
+                        <span class="financial-health-score">0</span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -24,8 +32,8 @@
                     <h3 class="card-title">Total Balance</h3>
                     <div class="card-icon">💰</div>
                 </div>
-                <p class="card-value">₹5,25,000</p>
-                <p class="card-change positive-change">+₹15,000 this month</p>
+                <p class="card-value">₹0</p>
+                <p class="card-change positive-change">Loading...</p>
             </div>
 
             <div class="card">
@@ -33,8 +41,8 @@
                     <h3 class="card-title">Monthly Income</h3>
                     <div class="card-icon">💸</div>
                 </div>
-                <p class="card-value">₹50,000</p>
-                <p class="card-change">Next payment in 15 days</p>
+                <p class="card-value">₹0</p>
+                <p class="card-change">Loading...</p>
             </div>
 
             <div class="card">
@@ -42,8 +50,8 @@
                     <h3 class="card-title">Monthly Expenses</h3>
                     <div class="card-icon">📊</div>
                 </div>
-                <p class="card-value">₹35,000</p>
-                <p class="card-change negative-change">+12% from last month</p>
+                <p class="card-value">₹0</p>
+                <p class="card-change">Loading...</p>
             </div>
 
             <div class="card">
@@ -51,8 +59,8 @@
                     <h3 class="card-title">Savings</h3>
                     <div class="card-icon">🎯</div>
                 </div>
-                <p class="card-value">₹15,000</p>
-                <p class="card-change positive-change">30% of income</p>
+                <p class="card-value">₹0</p>
+                <p class="card-change">Loading...</p>
             </div>
         </div>
 
@@ -61,10 +69,9 @@
                 <div class="chart-header">
                     <h3 class="chart-title">Spending Trend</h3>
                     <div class="chart-filters">
-                        <button class="chart-filter active">1M</button>
-                        <button class="chart-filter">3M</button>
-                        <button class="chart-filter">6M</button>
-                        <button class="chart-filter">1Y</button>
+                        <button class="chart-filter active">Monthly</button>
+                        <button class="chart-filter">Quarterly</button>
+                        <button class="chart-filter">Yearly</button>
                     </div>
                 </div>
                 <div class="chart-container">
@@ -89,60 +96,7 @@
             </div>
 
             <ul class="transaction-list">
-                <li class="transaction-item">
-                    <div class="transaction-info">
-                        <div class="transaction-icon">🏠</div>
-                        <div class="transaction-details">
-                            <h4>House Rent</h4>
-                            <p>March 2024</p>
-                        </div>
-                    </div>
-                    <span class="transaction-amount expense">-₹15,000</span>
-                </li>
-
-                <li class="transaction-item">
-                    <div class="transaction-info">
-                        <div class="transaction-icon">💼</div>
-                        <div class="transaction-details">
-                            <h4>Salary Credit</h4>
-                            <p>TechCorp Ltd</p>
-                        </div>
-                    </div>
-                    <span class="transaction-amount income">+₹50,000</span>
-                </li>
-
-                <li class="transaction-item">
-                    <div class="transaction-info">
-                        <div class="transaction-icon">🛒</div>
-                        <div class="transaction-details">
-                            <h4>Grocery Shopping</h4>
-                            <p>BigMart</p>
-                        </div>
-                    </div>
-                    <span class="transaction-amount expense">-₹3,500</span>
-                </li>
-
-                <li class="transaction-item">
-                    <div class="transaction-info">
-                        <div class="transaction-icon">📱</div>
-                        <div class="transaction-details">
-                            <h4>Mobile Bill</h4>
-                            <p>Airtel</p>
-                        </div>
-                    </div>
-                    <span class="transaction-amount expense">-₹999</span>
-                </li>
-
-                <li class="transaction-item">
-                    <div class="transaction-info">
-                        <div class="transaction-icon">💰</div>
-                        <div class="transaction-details">
-                            <h4>Investment Return</h4>
-                            <p>Mutual Fund</p>
-                        </div>
-                    </div>
-                    <span class="transaction-amount income">+₹2,500</span>
-                </li>
+                <!-- Transactions will be populated dynamically -->
             </ul>
         </div>
     </div>

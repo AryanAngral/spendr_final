@@ -1,5 +1,12 @@
 // Store active charts
 let activeCharts = {};
+let dashboardData = {
+    currentPeriod: 'monthly',
+    expenses: [],
+    income: [],
+    savingsHistory: [],
+    investmentReturns: []
+};
 
 // Function to destroy active charts
 function destroyActiveCharts() {
@@ -29,6 +36,249 @@ function createChart(ctx, config, chartKey) {
         console.error(`Error creating chart ${chartKey}:`, e);
         return null;
     }
+}
+
+// Initialize dashboard data based on user's salary
+function initializeDashboardData(userData) {
+    const monthlyIncome = userData.monthlyIncome;
+    const savingsGoal = userData.savingsGoal;
+    
+    // Generate 12 months of data
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    dashboardData.expenses = [];
+    dashboardData.income = [];
+    dashboardData.savingsHistory = [];
+    dashboardData.investmentReturns = [];
+
+    // Generate realistic variations in expenses (80-120% of expected expenses)
+    const expectedMonthlyExpenses = monthlyIncome * (1 - savingsGoal / 100);
+    
+    months.forEach((month, index) => {
+        // Random variation factor between 0.8 and 1.2
+        const variationFactor = 0.8 + Math.random() * 0.4;
+        const monthExpenses = expectedMonthlyExpenses * variationFactor;
+        
+        // Some months might have additional income (bonuses, etc.)
+        const additionalIncome = Math.random() < 0.2 ? monthlyIncome * 0.1 : 0;
+        const monthIncome = monthlyIncome + additionalIncome;
+        
+        // Calculate savings
+        const monthSavings = monthIncome - monthExpenses;
+        
+        // Calculate investment returns (assuming 8-12% annual returns, distributed monthly)
+        const annualReturn = 0.08 + Math.random() * 0.04;
+        const monthlyReturn = Math.pow(1 + annualReturn, 1/12) - 1;
+        const previousInvestments = index > 0 ? dashboardData.investmentReturns[index - 1] : monthSavings;
+        const investmentReturn = previousInvestments * (1 + monthlyReturn) + monthSavings;
+        
+        dashboardData.expenses.push(monthExpenses);
+        dashboardData.income.push(monthIncome);
+        dashboardData.savingsHistory.push(monthSavings);
+        dashboardData.investmentReturns.push(investmentReturn);
+    });
+}
+
+// Get data for current period
+function getPeriodData(data, period) {
+    switch(period) {
+        case 'yearly':
+            return data;
+        case 'quarterly':
+            return data.slice(-3);
+        default: // monthly
+            return [data[data.length - 1]];
+    }
+}
+
+// Get labels for current period
+function getPeriodLabels(period) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const currentMonth = new Date().getMonth();
+    
+    switch(period) {
+        case 'yearly':
+            return months;
+        case 'quarterly':
+            const quarterMonths = months.slice(currentMonth - 2, currentMonth + 1);
+            return quarterMonths.length === 3 ? quarterMonths : months.slice(-3);
+        default: // monthly
+            return [months[currentMonth]];
+    }
+}
+
+// Initialize dashboard charts
+function initDashboardCharts() {
+    const userData = localStorage.getItem('spendrUserData');
+    if (!userData) return;
+    
+    const parsedUserData = JSON.parse(userData);
+    if (!dashboardData.expenses.length) {
+        initializeDashboardData(parsedUserData);
+    }
+    
+    const spendingCtx = document.getElementById('spendingTrendChart')?.getContext('2d');
+    if (spendingCtx) {
+        const labels = getPeriodLabels(dashboardData.currentPeriod);
+        const expenseData = getPeriodData(dashboardData.expenses, dashboardData.currentPeriod);
+        const incomeData = getPeriodData(dashboardData.income, dashboardData.currentPeriod);
+        
+        createChart(spendingCtx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Expenses',
+                    data: expenseData,
+                    borderColor: '#e74c3c',
+                    tension: 0.4
+                }, {
+                    label: 'Income',
+                    data: incomeData,
+                    borderColor: '#2ecc71',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '₹' + value.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.dataset.label || '';
+                                const value = context.parsed.y;
+                                return label + ': ₹' + value.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+                            }
+                        }
+                    }
+                }
+            }
+        }, 'spendingTrend');
+    }
+    
+    const categoryCtx = document.getElementById('categoryDistributionChart')?.getContext('2d');
+    if (categoryCtx) {
+        // Use the budget categories and their spent amounts
+        const categories = Object.keys(budgetData.categories).map(formatCategoryName);
+        let spentAmounts;
+        
+        if (dashboardData.currentPeriod === 'yearly') {
+            spentAmounts = Object.values(budgetData.categories)
+                .map(cat => cat.yearlySpent.reduce((a, b) => a + b, 0));
+        } else if (dashboardData.currentPeriod === 'quarterly') {
+            spentAmounts = Object.values(budgetData.categories)
+                .map(cat => cat.quarterlySpent.slice(-3).reduce((a, b) => a + b, 0));
+        } else {
+            spentAmounts = Object.values(budgetData.categories).map(cat => cat.spent);
+        }
+
+        createChart(categoryCtx, {
+            type: 'doughnut',
+            data: {
+                labels: categories,
+                datasets: [{
+                    data: spentAmounts,
+                    backgroundColor: [
+                        '#3498db',
+                        '#2ecc71',
+                        '#e74c3c',
+                        '#f39c12',
+                        '#9b59b6',
+                        '#1abc9c'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return `${label}: ₹${value.toLocaleString('en-IN', { maximumFractionDigits: 0 })} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        }, 'categoryDist');
+    }
+
+    // Add Financial Health Score
+    updateFinancialHealthScore(parsedUserData);
+}
+
+// Update Financial Health Score
+function updateFinancialHealthScore(userData) {
+    const monthlyIncome = userData.monthlyIncome;
+    const savingsGoal = userData.savingsGoal;
+    const lastMonthExpenses = dashboardData.expenses[dashboardData.expenses.length - 1];
+    const lastMonthSavings = dashboardData.savingsHistory[dashboardData.savingsHistory.length - 1];
+    
+    let score = 0;
+    
+    // Savings Rate Score (40 points)
+    const actualSavingsRate = (lastMonthSavings / monthlyIncome) * 100;
+    score += Math.min(40, (actualSavingsRate / savingsGoal) * 40);
+    
+    // Expense Management Score (30 points)
+    const expenseRatio = lastMonthExpenses / monthlyIncome;
+    score += expenseRatio <= 0.7 ? 30 : (30 * (0.7 / expenseRatio));
+    
+    // Emergency Fund Score (30 points)
+    const emergencyFund = dashboardData.investmentReturns[dashboardData.investmentReturns.length - 1];
+    const monthsOfExpenses = emergencyFund / (monthlyIncome * 0.7);
+    score += Math.min(30, (monthsOfExpenses / 6) * 30);
+    
+    // Update score display
+    const scoreElement = document.querySelector('.financial-health-score');
+    if (scoreElement) {
+        const finalScore = Math.round(score);
+        scoreElement.textContent = finalScore;
+        
+        // Update score color
+        if (finalScore >= 80) {
+            scoreElement.style.color = '#2ecc71';
+        } else if (finalScore >= 60) {
+            scoreElement.style.color = '#f39c12';
+        } else {
+            scoreElement.style.color = '#e74c3c';
+        }
+    }
+}
+
+// Setup dashboard period switching
+function setupDashboardPeriodSwitching() {
+    const periodButtons = document.querySelectorAll('.dashboard .chart-filter');
+    periodButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            periodButtons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            // Update period and refresh display
+            dashboardData.currentPeriod = this.textContent.toLowerCase();
+            initDashboardCharts();
+        });
+    });
 }
 
 // Page Navigation
@@ -138,72 +388,24 @@ async function loadPageContent(pageId) {
 }
 
 // Chart Initialization Functions
-function initDashboardCharts() {
-    const spendingCtx = document.getElementById('spendingTrendChart')?.getContext('2d');
-    if (spendingCtx) {
-        createChart(spendingCtx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                datasets: [{
-                    label: 'Expenses',
-                    data: [30000, 35000, 25000, 40000, 32000, 38000],
-                    borderColor: '#e74c3c',
-                    tension: 0.4
-                }, {
-                    label: 'Income',
-                    data: [50000, 50000, 50000, 50000, 50000, 50000],
-                    borderColor: '#2ecc71',
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
-            }
-        }, 'spendingTrend');
-    }
-    
-    const categoryCtx = document.getElementById('categoryDistributionChart')?.getContext('2d');
-    if (categoryCtx) {
-        createChart(categoryCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Housing', 'Food', 'Transport', 'Entertainment', 'Shopping', 'Utilities'],
-                datasets: [{
-                    data: [30, 15, 15, 10, 10, 20],
-                    backgroundColor: [
-                        '#3498db',
-                        '#2ecc71',
-                        '#e74c3c',
-                        '#f39c12',
-                        '#9b59b6',
-                        '#1abc9c'
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
-            }
-        }, 'categoryDist');
-    }
-}
-
 function initBudgetCharts() {
     const spendingTrendCtx = document.getElementById('spendingTrendChart')?.getContext('2d');
     if (spendingTrendCtx) {
+        const categories = Object.keys(budgetData.categories).map(formatCategoryName);
+        const budgetAmounts = Object.values(budgetData.categories).map(cat => cat.budget);
+        const spentAmounts = Object.values(budgetData.categories).map(cat => cat.spent);
+
         createChart(spendingTrendCtx, {
             type: 'bar',
             data: {
-                labels: ['Housing', 'Food', 'Transport', 'Entertainment', 'Shopping', 'Utilities'],
+                labels: categories,
                 datasets: [{
                     label: 'Budget',
-                    data: [15000, 7500, 7500, 5000, 5000, 5000],
+                    data: budgetAmounts,
                     backgroundColor: '#3498db'
                 }, {
                     label: 'Spent',
-                    data: [9000, 6375, 7125, 2000, 2500, 3750],
+                    data: spentAmounts,
                     backgroundColor: '#2ecc71'
                 }]
             },
@@ -221,12 +423,15 @@ function initBudgetCharts() {
 
     const categoryDistCtx = document.getElementById('categoryDistributionChart')?.getContext('2d');
     if (categoryDistCtx) {
+        const categories = Object.keys(budgetData.categories).map(formatCategoryName);
+        const spentAmounts = Object.values(budgetData.categories).map(cat => cat.spent);
+
         createChart(categoryDistCtx, {
             type: 'doughnut',
             data: {
-                labels: ['Housing', 'Food', 'Transport', 'Entertainment', 'Shopping', 'Utilities'],
+                labels: categories,
                 datasets: [{
-                    data: [9000, 6375, 7125, 2000, 2500, 3750],
+                    data: spentAmounts,
                     backgroundColor: [
                         '#3498db',
                         '#2ecc71',
